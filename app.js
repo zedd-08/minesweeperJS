@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				square.classList.add('flag')
 				square.innerHTML = '🚩'
 				flags++
+				checkForWin()
 			} else {
 				square.classList.remove('flag')
 				squares.innerHTML = ''
@@ -147,13 +148,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// game over function
 	function gameOver(square) {
+		let id = square.id
 		alert("BOOM 💥💥💥 Game Over")
 		isGameOver = true
 
 		// show all bomb locations
 		squares.forEach(square => {
 			if (square.classList.contains('bomb'))
-				square.innerHTML = '💣'
+				if (square.id === id) square.innerHTML = '💥'
+				else square.innerHTML = '💣'
 		})
+	}
+
+	// check for win
+	function checkForWin() {
+		let matches = 0
+		for (let i = 0; i < squares.length; i++) {
+			if (squares[i].classList.contains('flag') && squares[i].classList.contains('bomb')) {
+				matches++
+			}
+
+			if (matches === bombAmount) {
+				alert('🏁 🎉🎉 You win! 🎉🎉 🏁')
+				isGameOver = true
+				return
+			}
+		}
 	}
 })
