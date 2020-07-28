@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	let width = 10
 	let bombAmount = 20
+	let flags = 0
 	let squares = []
 	let isGameOver = false
 
@@ -25,6 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			square.addEventListener('click', function (e) {
 				click(square)
 			})
+
+			// add ctrl left click to flag
+			square.oncontextmenu = function (e) {
+				e.preventDefault()
+				addFlag(square)
+			}
 		}
 
 		// add numbers to boxes
@@ -56,12 +63,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	createBoard()
 
+	// add flag event handler
+	function addFlag(square) {
+		if (isGameOver) return
+		if (!square.classList.contains('checked') && (flags < bombAmount)) {
+			if (!square.classList.contains('flag')) {
+				square.classList.add('flag')
+				square.innerHTML = '🚩'
+				flags++
+			} else {
+				square.classList.remove('flag')
+				squares.innerHTML = ''
+				flags--
+			}
+		}
+	}
+
 	// the event listener function
 	function click(square) {
 		if (isGameOver) return
 		if (square.classList.contains('checked') || square.classList.contains('flag')) return
 		if (square.classList.contains('bomb')) {
-			console.log('Game over!')
+			gameOver(square)
 		} else {
 			let total = square.getAttribute('data')
 			if (total > 0) {
@@ -120,5 +143,17 @@ document.addEventListener('DOMContentLoaded', () => {
 				click(newSquare)
 			}
 		}, 10)
+	}
+
+	// game over function
+	function gameOver(square) {
+		alert("BOOM 💥💥💥 Game Over")
+		isGameOver = true
+
+		// show all bomb locations
+		squares.forEach(square => {
+			if (square.classList.contains('bomb'))
+				square.innerHTML = '💣'
+		})
 	}
 })
